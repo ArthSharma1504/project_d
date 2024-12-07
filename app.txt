@@ -1,0 +1,32 @@
+mport tensorflow as tf
+from tensorflow.keras import datasets, layers, models
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load and preprocess the MNIST dataset
+(x_train, y_train), (x_test, y_test) = datasets.mnist.load_data()
+
+# Normalize pixel values to be between 0 and 1 by dividing by 255
+x_train, x_test = x_train / 255.0, x_test / 255.0
+
+# Reshape the data to include a single channel (grayscale)
+x_train = x_train.reshape((x_train.shape[0], 28, 28, 1))
+x_test = x_test.reshape((x_test.shape[0], 28, 28, 1))
+
+# Data Augmentation using ImageDataGenerator
+datagen = ImageDataGenerator(
+    rotation_range=10,       # Rotate images by up to 10 degrees
+    zoom_range=0.1,          # Random zoom
+    width_shift_range=0.1,   # Shift images horizontally by 10%
+    height_shift_range=0.1,  # Shift images vertically by 10%
+    shear_range=0.1          # Shear angle
+)
+
+# Fit the augmentation on the training data
+datagen.fit(x_train)
+
+model = models.Sequential()
+
+model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
+model.add(layers.MaxPooling2D((2, 2)))  # Max pooling layer
